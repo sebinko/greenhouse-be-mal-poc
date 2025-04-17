@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=StrongLocalPassword
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql_data:/var/opt/mssql
+    restart: unless-stopped
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "$$SA_PASSWORD" -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+  mosquitto:
+    image: eclipse-mosquitto:latest
+    ports:
+      - "1883:1883"  # MQTT port
+      - "9001:9001"  # WebSockets port
+    volumes:
+      - mosquitto_data:/mosquitto/data
+      - mosquitto_log:/mosquitto/log
+      - ./mosquitto/config:/mosquitto/config
+    restart: unless-stopped
+
+  greenhouse-simulator:
+    build:
+      context: ./src/iot-simulator
+      dockerfile: Dockerfile
+    depends_on:
+      - mosquitto
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1  # Ensures Python output is sent straight to container logs
+
+volumes:
+  mssql_data:
+  mosquitto_data:
+  mosquitto_log:
