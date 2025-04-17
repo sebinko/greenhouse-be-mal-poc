@@ -30,11 +30,46 @@ services:
       - ./mosquitto/config:/mosquitto/config
     restart: unless-stopped
 
+
+  
+  mal-model:
+    build:
+      context: ./src/mal-model
+      dockerfile: Dockerfile
+    profiles:
+      - build-model
+    depends_on:
+      - mssql
+      - mosquitto
+
+    volumes:
+          - ./models:/app/models  # Mount host directory to container's model output directory
+
+    environment:
+      - PYTHONUNBUFFERED=1  # Ensures Python output is sent straight to container logs
+  
   greenhouse-simulator:
     build:
       context: ./src/iot-simulator
       dockerfile: Dockerfile
     depends_on:
+      - mssql
+      - mosquitto
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1  # Ensures Python output is sent straight to container logs
+  
+  # Add this to your existing docker-compose-local.yml file
+  mal-api:
+    build:
+      context: ./src/mal-api
+      dockerfile: Dockerfile
+    ports:
+      - "505:5000"
+    volumes:
+      - ./models:/models  # Mount the models directory
+    depends_on:
+      - mssql
       - mosquitto
     restart: unless-stopped
     environment:
