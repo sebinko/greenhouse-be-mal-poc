@@ -3,9 +3,10 @@ version: '3.8'
 services:
   mssql:
     image: mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=StrongLocalPassword
+      - SA_PASSWORD=!2StrongLocalPassword$@!
       - MSSQL_PID=Developer
     ports:
       - "1433:1433"
@@ -75,6 +76,14 @@ services:
     environment:
       - PYTHONUNBUFFERED=1  # Ensures Python output is sent straight to container logs
 
+  iot-consumer:
+      build:
+        context: ./src
+        dockerfile: IoTConsumer/Dockerfile
+      depends_on:
+        - mssql
+        - mosquitto
+      restart: unless-stopped
 volumes:
   mssql_data:
   mosquitto_data:
