@@ -5,7 +5,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace IoTConsumer
+namespace IoTConsumer.Services
 {
     public class MqttConsumerHostedService : IHostedService
     {
