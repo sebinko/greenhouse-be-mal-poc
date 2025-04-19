@@ -9,20 +9,22 @@ This project demonstrates a system architecture with three main components that 
 - **IoT Consumer**: C# service that consumes MQTT messages and stores them in the database
 - **Data**: C# database connection module for data persistence
 
-## Docker-Only Deployment
-
-Note that this system is designed to run in Docker containers only. The connection strings for the database, MQTT broker, and other services rely on Docker container naming and networking. Running components individually outside Docker will require configuration changes.
-
 ## System Architecture
 
 - The components communicate through:
-  - **Database**: Shared storage for model data and predictions
-  - **MQTT**: Message broker for IoT communication
+  - **Database**: MS SQL Server database for shared storage for model data and predictions
+  - **MQTT**: Mosquitto MQTT broker for IoT communication
   - **REST API**: HTTP endpoints for predictions and frontend integration
 
 ## Important Note
 
 **This is only a proof of concept** and was quickly made to demonstrate communication between components. The final project architecture will differ significantly. This implementation is simplified to show that the core communication patterns work.
+
+This project intentionally does not include any CI/CD pipelines or deployment automation as it's strictly a proof of concept. Production implementations would require proper DevOps setup including automated testing, deployment pipelines, and monitoring.
+
+## Docker-Only Deployment
+
+Note that this system is designed to run in Docker containers only. The connection strings for the MS SQL Server database, Mosquitto MQTT broker, and other services rely on Docker container naming and networking. Running components individually outside Docker will require configuration changes.
 
 ## Quick Start
 
